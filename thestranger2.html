@@ -14,16 +14,18 @@
     content="Hello World!"
   />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
 </head>
 <body>
-
   <div id="markdownContent"></div>
 
-<script>
-  const markdown = '#Hello!';
-  document.getElementById('markdownContent').innerHTML = marked(markdown);
-</script>
-
+  <script>
+    const markdown = `
+      # Hello!
+      This is a **Markdown** example.
+      - Item 1
+      - Item 2
+    `;
+    document.getElementById('markdownContent').innerHTML = marked(markdown);
+  </script>
 </body>
 </html>
