@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script defer src="/_vercel/insights/script.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
+  />
+  <title>Keroshan Pillay</title>
+  <meta
+    name="description"
+    content="Hello World!"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+</head>
+<body>
+
+  <div id="markdownContent"></div>
+
+<script>
+  const markdown = '#Hello!';
+  document.getElementById('markdownContent').innerHTML = marked(markdown);
+</script>
+
+</body>
+</html>
