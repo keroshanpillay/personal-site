@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script defer src="/_vercel/insights/script.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
+    />
+    <title>Keroshan Pillay</title>
+    <meta
+      name="description"
+      content="Hello World!"
+    />
+  </head>
+  <body>
+    <h1>Path Dependence in AMM-Based Markets: Why AMM Prediction Markets Aren't &quot;Truth Machines&quot;</h1>
+    
+    <h2>Executive Summary</h2>
+    
+    <p>This research challenges a fundamental assumption in decentralized prediction markets: that automated market makers (AMMs) function as &quot;truth machines&quot; that purely reflect market beliefs. We mathematically prove that AMM-based markets like Truemarkets are inherently path-dependent, meaning the sequence of trades and liquidity events affects final prices—beyond just reflecting market information. This creates systematic distortions in prediction market probability estimates, with deviations of up to 10 percentage points in simulated markets. We provide both theoretical proofs and empirical evidence from ETH/USDC pools, concluding with actionable insights for traders, developers, and protocol designers.</p>
+    
+    <h2>Introduction: The &quot;Truth Machine&quot; Fallacy</h2>
+    
+    <p>Decentralized prediction markets like Truemarkets are often described as &quot;truth machines&quot; that efficiently aggregate dispersed knowledge into accurate probability estimates. This claim relies on an implicit assumption: that market prices purely reflect current beliefs about future outcomes, independent of how trading activity unfolds.</p>
+    
+    <p>But what if the mechanism itself introduces distortions?</p>
+    
+    <p>Our research has uncovered a fundamental property of AMM-based prediction markets that challenges their status as neutral information aggregators: <strong>AMMs are inherently path-dependent systems</strong>.</p>
+    
+    <p>The order and sequence of operations (trades and liquidity events) materially affects final prices, creating a form of &quot;memory&quot; in these markets that goes beyond reflecting current beliefs.</p>
+    
+    <h2>The Path Dependence Problem</h2>
+    
+    <p>Path dependence means the final state of a system depends not just on current inputs but on the specific sequence of past operations. In a path-independent system, performing operations A and B in either order (A→B or B→A) would yield identical results.</p>
+    
+    <p>For market mechanisms, path independence is critical to the claim that prices purely reflect information. If prices depend on the specific path of trades rather than just their net effect, then prices encode historical artifacts alongside current beliefs.</p>
+    
+    <p>In AMM-based markets, we've proven that this path dependence is not just theoretically possible but mathematically certain.</p>
+    
+    <h2>Mathematical Proof (Simplified)</h2>
+    
+    <p>Consider a standard AMM pool with reserves (x, y) following the constant product formula x × y = k.</p>
+    
+    <p>Let's examine two common operations:</p>
+    
+    <ul>
+    <li>Operation A: Adding liquidity (increasing both tokens proportionally by factor α)</li>
+    <li>Operation B: Executing a swap (adding Δx of token X and removing the corresponding amount of token Y)</li>
+    </ul>
+    
+    <p>If we perform A→B:</p>
+    
+    <ol>
+    <li><p>After adding α proportion of liquidity:</p></li>
+    <li><p>x₁ = x₀(1 + α)</p></li>
+    <li><p>y₁ = y₀(1 + α)</p></li>
+    <li><p>k₁ = k₀(1 + α)²</p></li>
+    <li><p>After swap:</p></li>
+    <li><p>x₂ = x₁ + Δx = x₀(1 + α) + Δx</p></li>
+    <li><p>y₂ = k₁/x₂ = k₀(1 + α)²/[x₀(1 + α) + Δx]</p></li>
+    </ol>
+    
+    <p>If we perform B→A:</p>
+    
+    <ol>
+    <li><p>After swap:</p></li>
+    <li><p>x₁' = x₀ + Δx</p></li>
+    <li><p>y₁' = k₀/x₁' = k₀/(x₀ + Δx)</p></li>
+    <li><p>After adding liquidity:</p></li>
+    <li><p>x₂' = x₁'(1 + α) = (x₀ + Δx)(1 + α)</p></li>
+    <li><p>y₂' = y₁'(1 + α) = k₀(1 + α)/(x₀ + Δx)</p></li>
+    </ol>
+    
+    <p>Comparing final states:</p>
+    
+    <ul>
+    <li>x₂' - x₂ = Δx × α (the final amount of token X differs)</li>
+    <li>y₂ ≠ y₂' (the final amount of token Y differs)</li>
+    </ul>
+    
+    <p>This proves that the order of operations matters in AMMs. The final state—and therefore the price—depends on the specific sequence of past operations.</p>
+    
+    <h2>Numerical Example</h2>
+    
+    <p>Consider an ETH/USDC pool with initial reserves of 100 ETH and 200,000 USDC.</p>
+    
+    <p>If we add 10% liquidity then swap 10 ETH:</p>
+    
+    <ul>
+    <li>Final state: 120 ETH, 201,666.67 USDC</li>
+    </ul>
+    
+    <p>If we swap 10 ETH then add 10% liquidity:</p>
+    
+    <ul>
+    <li>Final state: 121 ETH, 200,000 USDC</li>
+    </ul>
+    
+    <p>The final states differ by 1 ETH and 1,666.67 USDC—a meaningful economic difference from simply changing operation order.</p>
+    
+    <h2>Real-World Evidence</h2>
+    
+    <p><strong>Table 1: Top Path Dependence Opportunities in ETH/USDC Pool</strong></p>
+    
+    <table>
+    <colgroup>
+    <col/>
+    <col/>
+    <col/>
+    <col/>
+    <col/>
+    <col/>
+    </colgroup>
+    
+    <thead>
+    <tr>
+      <th>Time</th>
+      <th>Swap (USD)</th>
+      <th>Liquidity (USD)</th>
+      <th>Alpha</th>
+      <th>Price Impact</th>
+      <th>Price Comparison</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    <tr>
+      <td>11:32:11</td>
+      <td>$7.82</td>
+      <td>$644.26</td>
+      <td>0.525</td>
+      <td>-0.680%</td>
+      <td>4.43e-16 vs 4.40e-16</td>
+    </tr>
+    <tr>
+      <td>12:20:11</td>
+      <td>$474.48</td>
+      <td>$10,131.59</td>
+      <td>0.214</td>
+      <td>-0.348%</td>
+      <td>4.45e-16 vs 4.43e-16</td>
+    </tr>
+    <tr>
+      <td>12:15:11</td>
+      <td>$66.87</td>
+      <td>$2,244.03</td>
+      <td>0.191</td>
+      <td>-0.317%</td>
+      <td>4.42e-16 vs 4.40e-16</td>
+    </tr>
+    <tr>
+      <td>11:34:11</td>
+      <td>$545.01</td>
+      <td>$15,533.56</td>
+      <td>0.143</td>
+      <td>-0.247%</td>
+      <td>4.40e-16 vs 4.39e-16</td>
+    </tr>
+    <tr>
+      <td>09:55:11</td>
+      <td>$1,401.58</td>
+      <td>$17,663.57</td>
+      <td>0.067</td>
+      <td>-0.125%</td>
+      <td>4.43e-16 vs 4.42e-16</td>
+    </tr>
+    </tbody>
+    </table>
+    
+    <p>Our analysis of ETH/USDC pools revealed multiple instances of path dependence in real trading activity. The most extreme case showed a -0.68% price impact, meaning if operations had occurred in reverse order, the final price would have differed by this percentage.</p>
+    
+    <p>Key findings:</p>
+    
+    <ul>
+    <li>25 distinct opportunities where operation sequence measurably impacted pool state</li>
+    <li>Strong correlation between liquidity proportion (alpha) and price impact</li>
+    <li>Effects most pronounced when large liquidity changes occurred around significant trades</li>
+    <li>Statistical significance confirmed (p-value: 0.0375)</li>
+    </ul>
+    
+    <h2>Simulations: Identical Markets, Different Paths</h2>
+    
+    <p>To quantify impact on prediction markets, we simulated identical markets experiencing different trading sequences. Each market started with equal reserves of YES/NO tokens (50% probability) and received identical net information but in different sequences.</p>
+    
+    <p>Three scenarios tested:</p>
+    
+    <ol>
+    <li>Gradual information (sequential trades favoring YES)</li>
+    <li>Oscillating information (contradictory signals with final YES bias)</li>
+    <li>Sharp information shock (strongly favoring YES)</li>
+    </ol>
+    
+    <p>For each scenario, we compared:</p>
+    
+    <ul>
+    <li>Path 1: Liquidity additions before informed trades</li>
+    <li>Path 2: Liquidity additions after informed trades</li>
+    </ul>
+    
+    <p>Results showed significant price divergence despite identical information:</p>
+    
+    <ul>
+    <li>Sharp shock scenario: 5.8 percentage point difference with 50% liquidity addition</li>
+    <li>Maximum divergence: 10.8 percentage points with 100% liquidity addition</li>
+    <li>Even modest liquidity events (10%) created noticeable divergence (0.4-3.2pp)</li>
+    </ul>
+    
+    <p><strong>Table 2: Probability Divergence by Liquidity Size (α)</strong></p>
+    
+    <table>
+    <colgroup>
+    <col/>
+    <col/>
+    <col/>
+    <col/>
+    </colgroup>
+    
+    <thead>
+    <tr>
+      <th>Liquidity Size (α)</th>
+      <th>Gradual Scenario</th>
+      <th>Oscillating Scenario</th>
+      <th>Sharp Shock Scenario</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    <tr>
+      <td>10%</td>
+      <td>0.5 pp</td>
+      <td>0.4 pp</td>
+      <td>3.2 pp</td>
+    </tr>
+    <tr>
+      <td>20%</td>
+      <td>1.0 pp</td>
+      <td>0.7 pp</td>
+      <td>5.8 pp</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>2.2 pp</td>
+      <td>1.5 pp</td>
+      <td>5.8 pp</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>3.1 pp</td>
+      <td>2.2 pp</td>
+      <td>8.3 pp</td>
+    </tr>
+    <tr>
+      <td>100%</td>
+      <td>3.9 pp</td>
+      <td>2.8 pp</td>
+      <td>10.8 pp</td>
+    </tr>
+    </tbody>
+    </table>
+    
+    <p><em>pp = percentage points</em></p>
+    
+    <p>These aren't theoretical edge cases—they represent realistic market conditions where identical information leads to materially different probability estimates solely due to operation sequencing.</p>
+    
+    <h2>Impact on Truemarkets and Other AMM Prediction Markets</h2>
+    
+    <p>For prediction markets like Truemarkets that use AMM mechanisms, our findings have profound implications:</p>
+    
+    <ol>
+    <li><p><strong>Not Pure Information Aggregators</strong>: Prices reflect both market beliefs and historical path artifacts, challenging their status as &quot;truth machines.&quot;</p></li>
+    <li><p><strong>Price Interpretation Problem</strong>: Two markets with identical information but different trading sequences will show different probability estimates.</p></li>
+    <li><p><strong>Liquidity Provider Impact</strong>: Liquidity providers influence prices beyond their informational contribution, simply through the timing of their liquidity operations.</p></li>
+    <li><p><strong>Structural Bias</strong>: The relative timing of liquidity events and informed trading creates systematic distortions in probability estimates.</p></li>
+    </ol>
+    
+    <p>In the context of Truemarkets specifically:</p>
+    
+    <ul>
+    <li>Their AMM design inherits this path dependence property</li>
+    <li>Probability estimates can vary by 5-10 percentage points due solely to operation sequencing</li>
+    <li>These distortions are most pronounced during periods of significant news or information flow</li>
+    <li>The effect scales with liquidity pool size and concentration of trading</li>
+    </ul>
+    
+    <h2>Alpha: Strategic Implications for Traders</h2>
+    
+    <p>This research reveals several actionable insights for traders:</p>
+    
+    <ol>
+    <li><p><strong>Timing Arbitrage</strong>: Strategically timing trades around expected liquidity events can create advantageous price impacts.</p></li>
+    <li><p><strong>Cross-Market Comparison</strong>: Different AMM prediction markets for the same event may show different probabilities due to path differences, creating arbitrage opportunities.</p></li>
+    <li><p><strong>Interpreting Price Moves</strong>: Sharp price moves following liquidity events should be evaluated within the context of path dependence rather than assumed to reflect new information.</p></li>
+    <li><p><strong>Optimal Trade Sizing</strong>: Breaking large trades into smaller tranches, especially around liquidity events, can reduce path dependence effects and improve execution.</p></li>
+    <li><p><strong>Liquidity Provider Edge</strong>: LPs can strategically time liquidity additions/removals around informed trading to capture value beyond standard fees.</p></li>
+    </ol>
+    
+    <h2>Recommendations for Protocol Designers</h2>
+    
+    <p>For those building or improving AMM-based prediction markets:</p>
+    
+    <ol>
+    <li><p><strong>Path-Aware Designs</strong>: Consider meta-pool architectures that aggregate multiple independent AMM pools tracking the same assets to reduce path-specific artifacts.</p></li>
+    <li><p><strong>Explicit Disclosures</strong>: Protocol documentation should acknowledge path dependence and educate users about its impact on price interpretation.</p></li>
+    <li><p><strong>Path Dependence Indicators</strong>: Implement on-chain metrics that quantify potential path dependence effect in a given pool (e.g., a &quot;path sensitivity index&quot;).</p></li>
+    <li><p><strong>Hybrid Oracle Solutions</strong>: Combine AMM price feeds with other oracle mechanisms that have different properties to reduce path dependence impacts.</p></li>
+    <li><p><strong>Economic Mitigations</strong>: Design fee structures that incentivize path-neutralizing behavior.</p></li>
+    </ol>
+    
+    <h2>Conclusion: Beyond &quot;Truth Machines&quot;</h2>
+    
+    <p>AMM-based prediction markets like Truemarkets offer valuable functionality, but they cannot function as pure &quot;truth machines&quot; due to their inherent path dependence. Their prices necessarily encode both informational content and artifacts of the specific historical path of operations.</p>
+    
+    <p>This doesn't invalidate their utility, but it requires a more nuanced interpretation of their outputs. Understanding these mathematical properties allows market participants to make more informed decisions and may inspire next-generation designs that address these limitations.</p>
+    
+    <p>By demonstrating the mathematical certainty of path dependence in AMMs, we contribute to a deeper understanding of market mechanism design—showing that even seemingly simple formulas like x × y = k can exhibit complex emergent properties with profound implications for price discovery and information aggregation.</p>
+    
+    <hr />
+    
+    <p><em>This report is based on research conducted by Keroshan Pillay at Adjusted Finance (<a class="autolink" href="mailto:kero@adjusted.finance">kero@adjusted.finance</a>). The full academic paper contains additional details, proofs, and empirical evidence.</em></p>
+    </body>
+</html>
