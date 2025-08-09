@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script defer src="/_vercel/insights/script.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
+    />
+    <title>Keroshan Pillay</title>
+    <meta
+      name="description"
+      content="Hello World!"
+    />
+  </head>
+  <body>
+    <h2 id="loyalty-as-optimal-incentive-design-in-crypto-evidence-from-uniswap-v4-and-a-relational-contracts-lens">Loyalty as Optimal Incentive Design in Crypto: Evidence from Uniswap v4 and a Relational-Contracts Lens</h2>
+<h3 id="abstract">Abstract</h3>
+<p>In crypto incentive programs, “loyalty” is often dismissed as brand talk. We make a formal case that loyalty is optimal under incomplete contracts, drawing on Simon Board’s (2011) relational contracting framework. We pair the theory with public data from Gauntlet’s Uniswap v4 Month 2 campaign to quantify insider vs outsider effects, and we simulate policy rules that favor insiders unless an outsider’s advantage crosses a theoretically justified threshold. The resulting design playbook translates academic predictions into practical guidelines for mining programs, migrations, and hooks.</p>
+<h3 id="1-theory-loyalty-as-a-response-to-holdup-and-rents">1. Theory: Loyalty as a response to holdup and rents</h3>
+<ul>
+<li><strong>Holdup</strong>: When transfers are not fully contractible, the agent can expropriate quasi-rents after specific investment. To avoid this, the principal must grant a rent to the agent.</li>
+<li><strong>Endogenous fixed cost</strong>: Under a repeated relationship, the rent is paid once (via delayed utility), causing the first trade to behave like a fixed cost. This produces an insider–outsider divide: insiders are used efficiently; outsiders face a bias unless their advantage is large enough.</li>
+<li><strong>Onboarding condition</strong>: The outsider must deliver surplus that exceeds the rent wedge, approximately (1 − δ)·v for discount factor δ and per-period value v.</li>
+<li><strong>Comparative statics</strong>: As δ → 1, the optimal insider set expands and can be self-enforcing; with lower δ, loyalty is stricter.</li>
+</ul>
+<p>This yields a clean rule: “Use insiders by default; onboard outsiders only when their expected surplus clears the (1 − δ)·v threshold.”</p>
+<h3 id="2-data-uniswap-v4-month-2-gauntlet-">2. Data: Uniswap v4 Month 2 (Gauntlet)</h3>
+<p>Source: <a href="https://x.com/gauntlet_xyz/status/1942589883681243394">Gauntlet. Uniswap v4 Unichain Month 2 Liquidity Mining Retro</a> (as-of 2025-06-12). We parsed all pool rows and computed insider/outsider metrics. Insiders are defined by pre-incentive TVL or Volume market share above a threshold (sensitivity below).</p>
+<p>Key facts:</p>
+<ul>
+<li>Coverage: 19 pools.</li>
+<li>Persistence: corr(pre→current)<ul>
+<li>TVL MS: 0.593</li>
+<li>Volume MS: 0.689</li>
+</ul>
+</li>
+<li>Weighted ROI by incentives (all pools):<ul>
+<li>TVL ROI: $42.37 per $1</li>
+<li>Volume ROI: $31.53 per $1</li>
+</ul>
+</li>
+<li>Insider vs outsider (threshold 0.5% pre MS):<ul>
+<li>Insiders (n=6): TVL ROI $62.75; Volume ROI $11.67</li>
+<li>Outsiders (n=13): TVL ROI $35.26; Volume ROI $38.46</li>
+</ul>
+</li>
+</ul>
+<p>Sensitivity to insider threshold (pre MS):</p>
+<ul>
+<li>0.1% → insiders n=9: in_TVL_ROI $54.58; in_VOL_ROI $36.38 | outsiders: out_TVL_ROI $29.80; out_VOL_ROI $26.53</li>
+<li>0.5% → insiders n=6: in_TVL_ROI $62.75; in_VOL_ROI $11.67 | outsiders: out_TVL_ROI $35.26; out_VOL_ROI $38.46</li>
+<li>1.0% → insiders n=5: in_TVL_ROI $71.06; in_VOL_ROI $13.25 | outsiders: out_TVL_ROI $34.02; out_VOL_ROI $36.84</li>
+</ul>
+<p>Interpretation:</p>
+<ul>
+<li>Insiders compound liquidity and stability (higher TVL ROI, high persistence).</li>
+<li>Outsiders are crucial for flow and market share expansion (higher Volume ROI at the 0.5% definition), but come with an onboarding “rent.”</li>
+<li>Findings align with Gauntlet’s narrative: correlated LST pairs are TVL-productive but volume-light; high-volume pairs and hook experiments drive trading and learning.</li>
+</ul>
+<h3 id="3-policy-simulation-loyal-vs-myopic">3. Policy simulation: Loyal vs myopic</h3>
+<p>We simulate two policies with i.i.d. U[0,1] costs across a large supplier set, period value v=1, rent charged once per new partner, and discount factor δ.</p>
+<ul>
+<li>Loyal: preferentially select insiders; admit outsider only if (value advantage) ≥ (1 − δ)·v.</li>
+<li>Myopic: always pick the period’s cheapest (no loyalty bias); pays the first-trade rent for many partners across time.</li>
+</ul>
+<p>Present value (PV) profits over 5,000 periods, 50 agents:</p>
+<ul>
+<li>δ=0.90: PV_loyal 5.28 vs PV_myopic 0.99</li>
+<li>δ=0.95: PV_loyal 9.83 vs 4.13</li>
+<li>δ=0.98: PV_loyal 23.53 vs 22.56</li>
+<li>δ=0.995: PV_loyal 96.09 vs PV_myopic 155.39 (as δ→1, a broad insider set becomes efficient)</li>
+</ul>
+<p>Implications:</p>
+<ul>
+<li>For realistic patience (δ≈0.90–0.98), loyalty dominates by amortizing rents and limiting churn.</li>
+<li>As δ approaches 1, the efficient insider set grows; do not stay too narrow—admit high-promise outsiders to increase average per-partner profit, consistent with Board’s comparative statics.</li>
+</ul>
+<h3 id="4-design-implications-for-incentive-programs">4. Design implications for incentive programs</h3>
+<ul>
+<li>Backbone liquidity (insiders):<ul>
+<li>Maintain emissions for core pairs that underpin composability and credit markets (e.g., USDC/ETH, WBTC/USDT tiers, major LST/ETH where systemic).</li>
+<li>Expect higher TVL ROI and persistence; monitor quality-of-liquidity signals (depth at touch, adverse selection) as relational health.</li>
+</ul>
+</li>
+<li>Onboarding (outsiders):<ul>
+<li>Admit when expected volume surplus clears (1 − δ)·v; migrations (e.g., WBTC→WBTC0) and uncorrelated pairs can cleanly exceed the wedge.</li>
+<li>Treat hook incentives as probation: require post-incentive retention and downstream protocol adoption to graduate into insiders.</li>
+</ul>
+</li>
+<li>Budgeting and measurement:<ul>
+<li>Split ROI by insider/outsider; track corr(pre→current MS) as a “compounder score.”</li>
+<li>Measure rent amortization: incentives per persistent $ of TVL and per persistent daily volume after tapering.</li>
+</ul>
+</li>
+<li>Governance alignment:<ul>
+<li>Calibrate δ to organizational patience/runway; as δ rises, responsibly expand insiders. As δ falls, tighten onboarding thresholds.</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-why-this-is-actionable-for-gauntlet-and-rigorous-for-academia">5. Why this is actionable for Gauntlet and rigorous for academia</h3>
+<ul>
+<li>Gauntlet: Provides a principled rule to segment spend, schedule migrations, and scale hook experiments. It predicts when to push volume vs when to harden liquidity, with empirically checkable KPIs.</li>
+<li>Academic rigor: Onchain settings uniquely enable tests of relational-contract predictions (endogenous switching costs, insider bias, employment-like contracts via continual rewards)—inviting collaborations to estimate δ-like patience and pool-specific rent wedges.</li>
+</ul>
+<h3 id="methods">Methods</h3>
+<ul>
+<li>Parsing and metrics computed from the Month 2 retro table;</li>
+<li>Insider thresholds evaluated at 0.1%, 0.5%, and 1.0% pre-incentive MS.</li>
+<li>Simulation approximates Board’s insider–outsider logic with a one-time rent and the (1 − δ)·v admission rule.</li>
+</ul>
+<h3 id="conclusion">Conclusion</h3>
+<p>Loyalty, precisely defined, is optimal contract design under onchain frictions. Programs that amortize onboarding rents and grow a high-quality insider set will convert emissions into durable market power. The theory predicts—and the Uniswap v4 data supports—that disciplined loyalty paired with targeted outsider onboarding outperforms opportunistic switching.</p>
+<p>References
+<a href="http://www.econ.ucla.edu/sboard/papers/loyalty.pdf">Board, S. (2011). Relational Contracts and the Value of Loyalty. American Economic Review, 101(7): 3349–3367</a></p>
+<p><a href="https://x.com/gauntlet_xyz/status/1942589883681243394">Gauntlet. Uniswap v4 Unichain Month 2 Liquidity Mining Retro (as-of 2025-06-12)</a></p>
+
+    </body>
+</html>
