@@ -1,0 +1,7 @@
+# robots.txt for keroshanpillay.com
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://keroshanpillay.com/sitemap.xml
